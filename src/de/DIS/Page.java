@@ -5,10 +5,11 @@ import java.io.IOException;
 
 public class Page {
 
-    public static void write (int pageID, int lsn, String userData) throws IOException {
-        FileWriter f = new FileWriter("data/page" + pageID + ".txt", false);
+    public static void write (int pageID, String userData) {
+
         try {
-            f.write(lsn +","+ userData);
+            FileWriter f = new FileWriter("data/" + pageID + ".txt", false);
+            f.write(userData);
             f.close();
         } catch  (IOException e) {
             e.printStackTrace();
