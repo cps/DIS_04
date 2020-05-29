@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PageTest {
 
     @Test
-    void write() throws IOException {
-        Page.write(01, 667, "This is a test.");
+    void write() {
+        Page.write(1,  "This is a test.");
     }
 }

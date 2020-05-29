@@ -12,4 +12,8 @@ public class LogEntry {
         this.pid = pid;
         this.data = data;
     }
+
+    public LogEntry(){
+
+    }
 }

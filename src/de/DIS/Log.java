@@ -39,4 +39,12 @@ public class Log {
 
     }
 
+    public int getMaxLsn(){
+        return maxLsn;
+    }
+
+    public void setMaxLsn(int lsn){
+        this.maxLsn = lsn;
+    }
+
 }
