@@ -8,17 +8,16 @@ import java.util.ArrayList;
 public class Main {
 
     /**
-     * @TODO Start & Initialize persistence manager
-     * @TODO Start clients
-     * @TODO Perform writes
-     * @TODO Clean up for next start
+     * Creates and starts multiple clients that perform some database actions.
+     * Variables reset, recovery, start allow to set the mode in which the program is run.
      */
     public static void main(String[] args) {
 
-        int reset = 1;
-        int recovery = 0;
-        int start = 0;
+        boolean reset = false;
+        boolean recovery = false;
+        boolean start = true;
 
+        // Create list of clients to be started, if start is set.
         ArrayList<Client> clients = new ArrayList<>();
         clients.add(new Client(1));
         clients.add(new Client(2));
@@ -26,17 +25,21 @@ public class Main {
         clients.add(new Client(4));
         clients.add(new Client(5));
 
-        if(reset > 0){
+        if(reset){
             clear();
         }
-        if(recovery > 0){
+        if(recovery){
             PersistenceManager.getTheManager().recovery();
         }
-        if(start > 0){
+        if(start){
             start(clients);
         }
     }
 
+    /**
+     * Starts a given list of clients as separate threads
+     * @param clients List of clients to start
+     */
     private static void start(ArrayList<Client> clients){
 
         for(Client client : clients){
@@ -44,6 +47,9 @@ public class Main {
         }
     }
 
+    /**
+     * Clears pages and logfile to allow a fresh start.
+     */
     private static void clear(){
 
         try{
@@ -63,6 +69,10 @@ public class Main {
         }
     }
 
+    /**
+     * Helper to delete a given folder recursively.
+     * @param folder Folder to delete
+     */
     private static void deleteFolder(File folder) {
         File[] files = folder.listFiles();
         if(files!=null) {
