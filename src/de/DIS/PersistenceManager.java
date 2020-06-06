@@ -26,14 +26,10 @@ public class PersistenceManager {
     private Hashtable<Integer, Integer> transaction_status = new Hashtable<>();
     private Hashtable<Integer, Integer> page_transaction = new Hashtable<>();
     private Hashtable<Integer, String> page_data = new Hashtable<>();
-    private int bufferSize = 1000;
+    private int bufferSize = 5;
     private Log log = new Log();
     private int maxTid = 0;
 
-    /**
-     * Create and initialize new persistence manager.
-     * @TODO Initialize Text files for pages & logs
-     */
     private PersistenceManager() throws IOException {}
 
     /**
@@ -46,7 +42,7 @@ public class PersistenceManager {
 
     /**
      * Starts a new transaction.
-     * @return The persistence manager creates a unique tran- saction ID and returns it to the client.
+     * @return The persistence manager creates a unique transaction ID and returns it to the client.
      */
     public synchronized int beginTransaction() {
         int taid = maxTid;
@@ -57,7 +53,7 @@ public class PersistenceManager {
     }
 
     /**
-     * Commits the transaction speci􏰂ed by the given transaction ID.
+     * Commits the transaction specifi􏰂ed by the given transaction ID.
      * @param taid Transaction ID
      */
     public synchronized void commit(int taid){
@@ -66,7 +62,8 @@ public class PersistenceManager {
     }
 
     /**
-     * Writes the given data with the given page ID on behalf of the given transaction to the bu􏰔er. If the given page already exists, its content is replaced completely by the given data.
+     * Writes the given data with the given page ID on behalf of the given transaction to the bu􏰔er.
+     * If the given page already exists, its content is replaced completely by the given data.
      * @param taid Transaction ID
      * @param pageid Page ID to write
      * @param data Data to write
@@ -79,6 +76,10 @@ public class PersistenceManager {
         bufferCheck();
     }
 
+    /**
+     * If buffer size is reached, writes all pages to persistent storage.
+     * Written pages are removed from buffer, read-operation is not implemented anyway.
+     */
     private synchronized void bufferCheck(){
         if(page_data.size() > bufferSize){
             Set<Integer> toRemove = new HashSet<>();
