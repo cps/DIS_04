@@ -19,12 +19,12 @@ public class Main {
         int recovery = 0;
         int start = 0;
 
-        ArrayList<Integer> clients = new ArrayList<>();
-        clients.add(1);
-        clients.add(2);
-        clients.add(3);
-        clients.add(4);
-        clients.add(5);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(new Client(1));
+        clients.add(new Client(2));
+        clients.add(new Client(3));
+        clients.add(new Client(4));
+        clients.add(new Client(5));
 
         if(reset > 0){
             clear();
@@ -37,11 +37,10 @@ public class Main {
         }
     }
 
-    private static void start(ArrayList<Integer> clients){
+    private static void start(ArrayList<Client> clients){
 
-        for(Integer client : clients){
-            Client clientThread = new Client(client);
-            clientThread.start();
+        for(Client client : clients){
+            client.start();
         }
     }
 
