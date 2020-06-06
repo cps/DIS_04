@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class Main {
 
@@ -25,6 +26,13 @@ public class Main {
         clients.add(new Client(4));
         clients.add(new Client(5));
 
+        clients.get(1).toExecute.add(0, new Consumer() {
+            @Override
+            public void accept(Object o) {
+                ((PersistenceManager)o).write(1,1,"ComplicatedTest");
+            }
+        } );
+
         if(reset){
             clear();
         }
@@ -43,7 +51,7 @@ public class Main {
     private static void start(ArrayList<Client> clients){
 
         for(Client client : clients){
-            client.start();
+            client.run();
         }
     }
 

@@ -1,20 +1,26 @@
 package de.DIS;
 
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * @todo Constructor: Get Persistence Manager singleton
  * @todo Write actions as given by parameter with timer in between
  */
-public class Client extends Thread{
+public class Client implements Runnable{
 
     private int index = 0;
+    public ArrayList<Consumer> toExecute = new ArrayList();
 
     public Client(int index){
         this.index = index;
     }
 
     public void run(){
+        System.out.println("Running stored commands.");
+        runStoredCommandsWithTimer();
+        System.out.println("Running hardcoded commands");
         executeTask(this.index);
     }
 
@@ -179,4 +185,18 @@ public class Client extends Thread{
             e.printStackTrace();
         }
     }
+
+    public void runStoredCommandsWithTimer(){
+        Random r = new Random();
+        for (Consumer c: toExecute){
+            System.out.println("Sending command to the manager.");
+            c.accept(PersistenceManager.getTheManager());
+            try {
+                Thread.sleep(r.nextInt(1000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
