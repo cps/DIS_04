@@ -109,14 +109,17 @@ public class PersistenceManager {
 
     public void recovery(){
         try{
+            //Initialize temporary Counters
             int maxLsn = log.getMaxLsn();
             int maxTid = this.maxTid;
 
+            //Open Log File
             File file = new File("data/log.json");
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line;
 
+            //Loop LogFile and identify winner transactions and find last LSN
             List<Integer> winnerTas = new ArrayList<>();
             while((line = br.readLine()) != null){
                 if(line.startsWith("{")){
@@ -126,39 +129,52 @@ public class PersistenceManager {
                     if(le.data.equals("#EOT#")){winnerTas.add(le.tid);}
                 }
             }
+            //Set maxLSN in the Log class
             log.setMaxLsn(maxLsn+1);
 
+            //Loop Log File again
             fr = new FileReader(file);
             br = new BufferedReader(fr);
             while((line = br.readLine()) != null){
                 if(line.startsWith("{")){
                     ObjectMapper mapper = new ObjectMapper();
                     LogEntry le = mapper.readValue(line, LogEntry.class);
+                    //If logEntry is a Write and part of a winner transaction
                     if(le.pid != -1 && winnerTas.contains(le.tid)){
                         if(le.tid > maxTid){maxTid = le.tid;}
+                        //Find page written by logEntry
                         File page = new File("data/"+le.pid+".txt");
+                        //If page not available, create new Page File
                         if(!page.exists()){
                             page.createNewFile();
                         }
+                        //Open pageFile
                         FileReader pfr = new FileReader(page);
                         BufferedReader pbr = new BufferedReader(pfr);
                         String[] data = new String[2];
+                        //Read content of page into a String array
                         if((line = pbr.readLine()) != null) {
                             data = line.split(",");
                         }else{
                             data[0] = "-1";
                         }
+                        //If LSN of Log equals LSN of pageFile
                         if(le.lsn == Integer.parseInt(data[0])){
+                            //If data of Log is different from data of pageFile
                             if(!le.data.equals(data[1])){
+                                //Redo Write
                                 Page.write(le.pid, le.lsn + ","+ le.data);
                             }
                         }
+                        //If LSN of Log is higher than LSN of Page
                         if(le.lsn > Integer.parseInt(data[0])){
+                            //Redo Write
                             Page.write(le.pid, le.lsn + ","+ le.data);
                         }
                     }
                 }
             }
+            //Set maxTid of PersistenceManager
             this.maxTid = maxTid+1;
 
         }catch (Exception e){
